@@ -1,13 +1,7 @@
-FROM ubuntu:16.04
+FROM ubuntu:latest
+MAINTAINER Keith Sterling (keith@chatillyc.om
 
 ENV container docker
-
-RUN systemctl set-default multi-user.target
-
-RUN apt-get update; apt-get -y install openssh-server openssh-client; apt-get clean
-RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
-RUN echo 'root:docker' | chpasswd
-RUN systemctl enable ssh.service
 
 VOLUME ["/sys/fs/cgroup"]
 VOLUME ["/run"]
@@ -39,20 +33,7 @@ WORKDIR /opt/program-y
 
 RUN \
   echo Installing Program-y && \
-  git init . && \
-  git remote add program-y https://github.com/keiffster/program-y && \
-  git pull program-y master && \
-  pip3 install -r requirements.txt
-
-CMD ["/sbin/init"]
-
-RUN useradd -ms /bin/bash ubuntu
-RUN chown -R ubuntu.ubuntu /opt/program-y
-
-RUN echo Installing program-y as a service
-RUN cp /opt/program-y/bots/y-bot/servusai.service /etc/systemd/system/servusai.service 
-RUN chmod +x /opt/program-y/bots/y-bot/servusai.sh
-RUN systemctl enable servusai.service 
+  pip3 install programy
 
 EXPOSE 8080
 EXPOSE 22
